@@ -40,9 +40,9 @@ def good_max(list, control):
 #global constants
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-FILE_NAME = "30mm_in90_4.0.csv"
+FILE_NAME = "30mm_in90_2.0.csv"
 FILE_PATH = os.path.join(SCRIPT_DIR, FILE_NAME)
-N_SEGMENTS = 50
+N_SEGMENTS = 10
 
 #Fileread
 df = pd.read_csv(FILE_PATH, delimiter=";")
@@ -53,7 +53,7 @@ pressure_data = df['Pressure_data'].values
 
 #File process
 start=first_true_min(pressure_data)
-end=binarySearch(timestamp_ms, 20013)
+end=binarySearch(timestamp_ms, 17803)
 timestamp_ms=timestamp_ms[start:end]
 pressure_data=pressure_data[start:end]
 
@@ -62,7 +62,7 @@ total_length = len(pressure_data)
 segment_length = total_length // N_SEGMENTS
 Fs = 140
 fig, axes = plt.subplots(N_SEGMENTS, 1, figsize=(10, 2 * N_SEGMENTS), sharex=True)
-fig.suptitle(f'Frequency Spectrum of {N_SEGMENTS} Data Segments (SFFT) \n(30mm Vertical 4.0)', fontsize=16)
+fig.suptitle(f'Frequency Spectrum of {N_SEGMENTS} Data Segments (SFFT)\n(30mm Vertical 2.0)', fontsize=16)
 f_dominants = []
 
 # 3. Iterate through each segment
@@ -98,18 +98,18 @@ for i in range(N_SEGMENTS):
 
 axes[-1].set_xlabel('Frequency (Hz)', fontsize=12)
 plt.tight_layout(rect=[0, 0.03, 1, 0.98])
-plt.savefig(os.path.join(SCRIPT_DIR, "30mm_in90_4.0_sfft.pdf"), format="pdf")
+plt.savefig(os.path.join(SCRIPT_DIR, "30mm_in90_2.0_sfft.pdf"), format="pdf")
 plt.clf()
 
 linsp = [i for i in range(1, N_SEGMENTS+1)]
-
-'''plt.figure(figsize=(12, 6))
+'''
+plt.figure(figsize=(12, 6))
 plt.plot(linsp, f_dominants)
 plt.xlabel("Segments")
 plt.ylabel("Dominant Frequency (Hz)")
 plt.grid()
-plt.title("Dominant Frequencies in the Segments \n(30mm Vertical 4.0)")
-plt.savefig(os.path.join(SCRIPT_DIR, "30mm_in90_4.0_f(segments).pdf"), format="pdf")
-plt.clf()'''
-
+plt.title("Dominant Frequencies in the Segments \n (30mm Vertical 2.0)")
+plt.savefig(os.path.join(SCRIPT_DIR, "30mm_in90_2.0_f(segments).pdf"), format="pdf")
+plt.clf()
+'''
 
