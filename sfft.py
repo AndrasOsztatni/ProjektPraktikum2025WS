@@ -37,7 +37,7 @@ def good_max(list, control):
     return index, amplitude, frequency
 
 
-def main(source, starting_index):
+def main(source, start_time, end_time):
     #Global Constants
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     FILE_NAME = source
@@ -51,26 +51,31 @@ def main(source, starting_index):
 
     #Fileread
     df = pd.read_csv(FILE_PATH, delimiter=";")
-
-    timestamp_ms = df['Timestamp'].values
-    pressure_data = df['Pressure_data'].values
-
+    if start_time: 
+        start_index = binarySearch(df['Timestamp'].values, start_time)
+        timestamp_ms = df['Timestamp'].values[start_index:]
+        pressure_data = df['Pressure_data'].values[start_index:]
+    else:
+        timestamp_ms = df['Timestamp'].values
+        pressure_data = df['Pressure_data'].values
 
     #File process
     start=first_true_min(pressure_data)
-    end=binarySearch(timestamp_ms, starting_index)
+    end=binarySearch(timestamp_ms, end_time)
     timestamp_ms=timestamp_ms[start:end]
     pressure_data=pressure_data[start:end]
 
 
     total_length = len(pressure_data)
     segment_length = total_length // N_SEGMENTS
+    segment_length_50 = total_length // (N_SEGMENTS*5)
     Fs = 140
     fig, axes = plt.subplots(N_SEGMENTS, 1, figsize=(10, 2 * N_SEGMENTS), sharex=True)
-    fig.suptitle(f'Frequency Spectrum of {N_SEGMENTS} Data Segments (SFFT)\n(30mm 45° 1.0)', fontsize=16)
+    fig.suptitle(f'Frequency Spectrum of {N_SEGMENTS} Data Segments (SFFT)\n({OPNENING_TYPE} {INCLINE}° {VERSION})', fontsize=16)
     f_dominants = []
 
-    # 3. Iterate through each segment
+    #Iterate through each segment
+    #First Iteration: 10 Plots
     for i in range(N_SEGMENTS):
         start_idx = i * segment_length
         end_idx = (i + 1) * segment_length
@@ -91,31 +96,50 @@ def main(source, starting_index):
         
         yf_magnitude = np.abs(yf[:N_half]) * 2 / N  
 
-        f_dominants.append(xf[np.argmax(yf_magnitude)])
-
         #Plot the spectrum
         ax = axes[i]
         ax.plot(xf_positive, yf_magnitude)
         ax.set_title(f'Segment {i+1} (Time: {timestamp_ms[start_idx]/1000:.2f}s - {timestamp_ms[end_idx-1]/1000:.2f}s)', fontsize=8)
         ax.set_ylabel('Magnitude', fontsize=8)
         ax.grid(True, alpha=0.5)
+    #Second Iteration: 50 Segments
+    for i in range(N_SEGMENTS*5):
+        start_idx = i * segment_length_50
+        end_idx = (i + 1) * segment_length_50
+        
+        pre_correction_segment = pressure_data[start_idx:end_idx]
+        segment = pre_correction_segment-np.mean(pre_correction_segment)
+        
+        window = np.hanning(len(segment))
+        windowed_segment = segment * window
 
+        N = len(windowed_segment)
+        yf = np.fft.fft(windowed_segment)
+        
+        xf = np.fft.fftfreq(N, 1/Fs)
+        
+        N_half = N // 2
+        xf_positive = xf[:N_half]
+        
+        yf_magnitude = np.abs(yf[:N_half]) * 2 / N  
+
+        f_dominants.append(xf[np.argmax(yf_magnitude)])
 
     axes[-1].set_xlabel('Frequency (Hz)', fontsize=12)
     plt.tight_layout(rect=[0, 0.03, 1, 0.98])
-    plt.savefig(os.path.join(SCRIPT_DIR, "30mm_in45_1.0_sfft.pdf"), format="pdf")
+    plt.savefig(os.path.join(FOLDER_PATH, f"{FOLDER_NAME}_sfft.pdf"), format="pdf")
     plt.clf()
 
-    linsp = [i for i in range(1, N_SEGMENTS+1)]
+    linsp = [i for i in range(1, 5*N_SEGMENTS+1)]
 
-    '''plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(12, 6))
     plt.plot(linsp, f_dominants)
     plt.xlabel("Segments")
     plt.ylabel("Dominant Frequency (Hz)")
     plt.grid()
-    plt.title("Dominant Frequencies in the Segments \n (30mm 45° 1.0)")
-    plt.savefig(os.path.join(SCRIPT_DIR, "30mm_in45_1.0_f(segments).pdf"), format="pdf")
-    plt.clf()'''
+    plt.title(f"Dominant Frequencies in the Segments \n ({OPNENING_TYPE} {INCLINE}° {VERSION})")
+    plt.savefig(os.path.join(FOLDER_PATH, f"{FOLDER_NAME}_f(segments).pdf"), format="pdf")
+    plt.clf()
 
 
 

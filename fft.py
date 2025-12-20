@@ -38,7 +38,7 @@ def good_max(list, control):
 
 
 
-def main(source, starting_index):
+def main(source, start_time, end_time):
     #Global Constants
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     FILE_NAME = source
@@ -51,13 +51,16 @@ def main(source, starting_index):
 
     #file read
     df = pd.read_csv(FILE_PATH, delimiter=";")
-
-    timestamp_ms = df['Timestamp'].values
-    pressure_data = df['Pressure_data'].values
-
+    if start_time: 
+        start_index = binarySearch(df['Timestamp'].values, start_time)
+        timestamp_ms = df['Timestamp'].values[start_index:]
+        pressure_data = df['Pressure_data'].values[start_index:]
+    else:
+        timestamp_ms = df['Timestamp'].values
+        pressure_data = df['Pressure_data'].values
     #file process
     start=first_true_min(pressure_data)
-    end=binarySearch(timestamp_ms, starting_index)
+    end=binarySearch(timestamp_ms, end_time)
     timestamp_ms=timestamp_ms[start:end]
     pressure_data=pressure_data[start:end]
     correction=np.mean(pressure_data)
