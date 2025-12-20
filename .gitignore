@@ -1,0 +1,16 @@
+# Ignore Python's compiled cache files
+__pycache__/
+*.py[cod]
+
+# Ignore Virtual Environments
+venv/
+.env
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore your local results or large data folders (if you don't want them in Git)
+Output/
+*.log
+test.py

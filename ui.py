@@ -2,7 +2,8 @@ import sys
 from PyQt6.QtWidgets import (QApplication, QTableWidget, QTableWidgetItem, 
                              QCheckBox, QWidget, QHBoxLayout, QVBoxLayout, QHeaderView)
 from PyQt6.QtCore import Qt
-
+import fft
+import sfft
 
 class AnalysisUI(QWidget):
     def __init__(self):
