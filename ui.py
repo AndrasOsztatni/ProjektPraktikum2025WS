@@ -82,12 +82,13 @@ class AnalysisUI:
         files = df['file_name'].values
         start_list = df['start_ms'].values
         end_list = df['end_ms'].values
-
+        
         for r in range(len(self.widths)):
+            current_width_label = self.widths[r].replace(" ", "")
             width = self.widths[r]
             for c in range(1, self.head_length - 1):
                 if self.vars[(r, c)].get():
-                    file = f"{r*10}mm_{self.headers[c]}"
+                    file = f"{current_width_label}_{self.headers[c]}"
                     for i in range(len(start_list)):
                         if file in files[i]:
                             start = start_list[i]
