@@ -69,7 +69,7 @@ def main(source, start_time, end_time):
     total_length = len(pressure_data)
     segment_length = total_length // N_SEGMENTS
     segment_length_50 = total_length // (N_SEGMENTS*5)
-    Fs = 140
+    Fs = 56
     fig, axes = plt.subplots(N_SEGMENTS, 1, figsize=(10, 2 * N_SEGMENTS), sharex=True)
     fig.suptitle(f'Frequency Spectrum of {N_SEGMENTS} Data Segments (SFFT)\n({OPNENING_TYPE} {INCLINE}° {VERSION})', fontsize=16)
     f_dominants = []

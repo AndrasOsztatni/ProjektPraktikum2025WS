@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+from scipy import stats
 
 #Definition of used Functions
 def first_max(list):
@@ -36,6 +37,8 @@ def good_max(list, control):
     frequency = control[index]
     return index, amplitude, frequency
 
+def opt_line(x: float, sl: float, inter: float):
+    return sl*x+inter
 
 
 def main(source, start_time, end_time):
@@ -64,7 +67,8 @@ def main(source, start_time, end_time):
     timestamp_ms=timestamp_ms[start:end]
     pressure_data=pressure_data[start:end]
     correction=np.mean(pressure_data)
-
+    
+    
     #Graph of Pressure change in time
 
     plt.plot(timestamp_ms, pressure_data)
@@ -76,9 +80,13 @@ def main(source, start_time, end_time):
     plt.clf()
     #Fourier Transform of Pressureoscillation
     pre_fourier_pressure=pressure_data-correction
+    slope, intercept, r, p, std_err = stats.linregress(timestamp_ms, pre_fourier_pressure)
+    
+    for i in range(len(timestamp_ms)):
+        pre_fourier_pressure[i]-=opt_line(timestamp_ms[i], slope, intercept)
 
     yf0 = np.fft.fft(pre_fourier_pressure)
-    xf0 = np.fft.fftfreq(len(pre_fourier_pressure), 1/140)
+    xf0 = np.fft.fftfreq(len(pre_fourier_pressure), 1/56)
     xf=xf0[:math.ceil(len(xf0)/2)]
     yf=yf0[:math.ceil(len(xf0)/2)]
     #Graph of Fourier Transform
@@ -106,8 +114,9 @@ def main(source, start_time, end_time):
         f'x = {f_dominant:.2f} Hz',
         (f_dominant, max_amplitude),
         textcoords="offset points",
-        xytext=(0, 5),
+        xytext=(50, 0),
         ha='center',
+        fontsize=14
     )
     plt.grid()
     plt.tight_layout()
