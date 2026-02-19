@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 import os
-
+from scipy import stats
 #Predefinied Functions
 def first_max(list):
     for i in range(0, len(list)):
@@ -36,6 +36,8 @@ def good_max(list, control):
     frequency = control[index]
     return index, amplitude, frequency
 
+def opt_line(x: float, sl: float, inter: float):
+    return sl*x+inter
 
 def main(source, start_time, end_time):
     #Global Constants
@@ -79,10 +81,15 @@ def main(source, start_time, end_time):
     for i in range(N_SEGMENTS):
         start_idx = i * segment_length
         end_idx = (i + 1) * segment_length
-        
+        segment_timestamp = timestamp_ms[start_idx:end_idx]
         pre_correction_segment = pressure_data[start_idx:end_idx]
         segment = pre_correction_segment-np.mean(pre_correction_segment)
         
+        slope, intercept, r, p, std_err = stats.linregress(segment_timestamp, segment)
+        
+        for j in range(len(segment_timestamp)):
+            segment[j]-=opt_line(segment_timestamp[j], slope, intercept)
+
         window = np.hanning(len(segment))
         windowed_segment = segment * window
 
