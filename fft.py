@@ -76,7 +76,7 @@ def main(source, start_time, end_time):
     plt.ylabel("Pressure (kPa)")
     plt.xlabel("Time (ms)")
     plt.grid()
-    plt.savefig(os.path.join(FOLDER_PATH, FOLDER_NAME+"_p(t).pdf") , format="pdf")
+    plt.savefig(os.path.join(FOLDER_PATH, FOLDER_NAME+"_p(t).jpg") , format="jpg")
     plt.clf()
     #Fourier Transform of Pressureoscillation
     pre_fourier_pressure=pressure_data-correction
@@ -96,7 +96,7 @@ def main(source, start_time, end_time):
     plt.grid()
     plt.title(f"Frequency spectrum of the \nPressure oscillation ({OPNENING_TYPE} {INCLINE}° {VERSION})")
     plt.tight_layout()
-    plt.savefig(os.path.join(FOLDER_PATH, FOLDER_NAME+"_fft.pdf"), format="pdf")
+    plt.savefig(os.path.join(FOLDER_PATH, FOLDER_NAME+"_fft.jpg"), format="jpg")
     plt.clf()
 
 
@@ -120,7 +120,7 @@ def main(source, start_time, end_time):
     )
     plt.grid()
     plt.tight_layout()
-    plt.savefig(os.path.join(FOLDER_PATH, FOLDER_NAME+"_powspec.pdf"), format="pdf")
+    plt.savefig(os.path.join(FOLDER_PATH, FOLDER_NAME+"_powspec.jpg"), format="jpg")
     plt.clf()
 
 

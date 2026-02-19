@@ -134,7 +134,7 @@ def main(source, start_time, end_time):
 
     axes[-1].set_xlabel('Frequency (Hz)', fontsize=12)
     plt.tight_layout(rect=[0, 0.03, 1, 0.98])
-    plt.savefig(os.path.join(FOLDER_PATH, f"{FOLDER_NAME}_sfft.pdf"), format="pdf")
+    plt.savefig(os.path.join(FOLDER_PATH, f"{FOLDER_NAME}_sfft.jpg"), format="jpg")
     plt.clf()
 
     linsp = [i for i in range(1, 5*N_SEGMENTS+1)]
@@ -145,7 +145,7 @@ def main(source, start_time, end_time):
     plt.ylabel("Dominant Frequency (Hz)")
     plt.grid()
     plt.title(f"Dominant Frequencies in the Segments \n ({OPNENING_TYPE} {INCLINE}° {VERSION})")
-    plt.savefig(os.path.join(FOLDER_PATH, f"{FOLDER_NAME}_f(segments).pdf"), format="pdf")
+    plt.savefig(os.path.join(FOLDER_PATH, f"{FOLDER_NAME}_f(segments).jpg"), format="jpg")
     plt.clf()
 
 
